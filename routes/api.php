@@ -14,3 +14,7 @@ Route::middleware(['auth:sanctum', 'admin'])->group(
 Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login'])
     ->name('login')
     ->middleware('guest');
+
+
+Route::post('/vendor/register', [VendorAuthController::class, 'register']);
+
