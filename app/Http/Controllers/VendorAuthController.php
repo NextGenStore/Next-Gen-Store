@@ -16,9 +16,7 @@ class VendorAuthController extends Controller
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
-
         $vendorRole = Role::firstOrCreate(['name' => 'vendor']);
-
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
