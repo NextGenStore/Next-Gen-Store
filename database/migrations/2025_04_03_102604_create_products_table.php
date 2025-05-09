@@ -13,18 +13,18 @@ return new class extends Migration {
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug');
-            $table->text('description')->nullable();
-            $table->text('image')->nullable();
+            $table->string('name', 2000);
+            $table->string('slug', 2000);
+            $table->string('image', 2000)->nullable();
+            $table->string('image_mime')->nullable();
+            $table->integer('image_size')->nullable();
+            $table->longText('description')->nullable();
             $table->decimal('price', 10, 2);
-//            $table->integer('stock')->default(0);
-//            $table->foreignId('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
-//            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
-//            $table->enum('status', ['active', 'out_of_stock', 'disabled'])->default('active');
-            $table->timestamps();
             $table->foreignIdFor(User::class, 'created_by')->nullable();
             $table->foreignIdFor(User::class, 'updated_by')->nullable();
+            $table->softDeletes();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
+            $table->timestamps();
         });
     }
 

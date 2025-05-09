@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'admin'])->group(
@@ -7,14 +8,11 @@ Route::middleware(['auth:sanctum', 'admin'])->group(
         Route::get('/user', [\App\Http\Controllers\Api\AuthController::class, 'getUser']);
         Route::post('/logout', [\App\Http\Controllers\Api\AuthController::class, 'logout']);
 
-        Route::apiResource('products', \App\Http\Controllers\Api\ProductController::class);
+        Route::apiResource('products', ProductController::class);
     });
-
 
 Route::post('/login', [\App\Http\Controllers\Api\AuthController::class, 'login'])
     ->name('login')
     ->middleware('guest');
-
-
 Route::post('/vendor/register', [VendorAuthController::class, 'register']);
 

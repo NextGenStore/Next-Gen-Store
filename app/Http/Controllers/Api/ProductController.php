@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductsRequest;
 use App\Http\Resources\ProductListResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Products;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -48,11 +49,13 @@ class ProductController extends Controller
         if ($image){
             $relativePath = $this->saveImage($image);
             $data['image'] = URL::to(Storage::url($relativePath));
+            $data['image_mime'] = $image->getClientMimeType();
+            $data['image_size'] = $image->getSize();
         }
 
         $product = Products::create($data);
 
-        return new ProductListResource($product);
+        return new ProductResource($product);
     }
 
     /**
@@ -60,10 +63,10 @@ class ProductController extends Controller
      */
     public function show(Products $products)
     {
-        return new ProductListResource($products);
+        return new ProductResource($products);
     }
 
-    public function update(ProductsRequest $request, Products $products)
+    public function update(ProductsRequest $request, Products $product)
     {
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
@@ -75,16 +78,17 @@ class ProductController extends Controller
         if ($image){
             $relativePath = $this->saveImage($image);
             $data['image'] = URL::to(Storage::url($relativePath));
+            $data['image_mime'] = $image->getClientMimeType();
+            $data['image_size'] = $image->getSize();
 
-            if ($products->image){
-                Storage::deleteDirectory( '/public/' .dirname($products->image));
+            if ($product->image){
+                Storage::deleteDirectory( '/public/' .dirname($product->image));
             }
         }
 
-        $products->update($data);
-        return new ProductListResource($products);
-
-
+        $product->update($data);
+        
+        return new ProductResource($product);
     }
 
 
@@ -101,15 +105,16 @@ class ProductController extends Controller
         return response()->noContent();
     }
 
-    private function saveImage(UploadedFile $image): string
+    private function saveImage(UploadedFile $image)
     {
         $path = 'images/' . Str::random();
-        if (!Storage::exists($path)){
-            Storage::makeDirectory($path , 0755, true);
+        if (!Storage::exists($path)) {
+            Storage::makeDirectory($path, 0755, true);
         }
-        if (!Storage::putFileAs('public/' .$path , $image , $image->getClientOriginalName())){
-            throw new \Exception("Failed to save image \"{$image->getClientOriginalName()}\"");
+        if (!Storage::putFileAS('public/' . $path, $image, $image->getClientOriginalName())) {
+            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
         }
+
         return $path . '/' . $image->getClientOriginalName();
     }
 }
