@@ -1,22 +1,29 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductsRequest;
+use App\Http\Requests\ProductVendorRequest;
 use App\Http\Resources\ProductListResource;
 use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductVendorResource;
 use App\Models\Products;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
-class ProductController extends Controller
+class VendorController extends Controller
 {
+
     /**
-     * Display a listing of the resource.
+     * Show the form for creating a new resource.
      */
+    public function create()
+    {
+        //
+    }
     public function index()
     {
         $search = request('search', false);
@@ -24,7 +31,6 @@ class ProductController extends Controller
         $sortField = request('sort_field', 'updated_at');
         $sortDirection = request('sort_direction', 'desc');
         $query = Products::query();
-
         $query->orderBy($sortField, $sortDirection);
         if ($search) {
             $query->where('name', 'like', '%{$search}%')
@@ -33,13 +39,11 @@ class ProductController extends Controller
 
         return ProductListResource::collection($query->paginate($perPage));
     }
-
     /**
      * Store a newly created resource in storage.
      */
-    public function store(ProductsRequest $request)
+    public function store(ProductVendorRequest $request)
     {
-
         $data = $request->validated();
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
@@ -56,56 +60,46 @@ class ProductController extends Controller
 
         $product = Products::create($data);
 
-        return new ProductResource($product);
+        return new ProductVendorResource($product);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Products $products)
+    public function show(string $id)
     {
-        return new ProductResource($products);
+        //
     }
 
-    public function update(ProductsRequest $request, Products $product)
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
     {
-        $data = $request->validated();
-        $data['updated_by'] = $request->user()->id;
-
-        /** @var \Illuminate\Http\UploadedFile $image */
-
-        $image = $data['image'] ?? null;
-
-        if ($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getClientMimeType();
-            $data['image_size'] = $image->getSize();
-
-            if ($product->image){
-                Storage::deleteDirectory( '/public/' .dirname($product->image));
-            }
-        }
-
-        $product->update($data);
-
-        return new ProductResource($product);
+        //
     }
-
 
     /**
      * Update the specified resource in storage.
      */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Products $products)
+    public function destroy(string $products)
     {
         $products->delete();
 
         return response()->noContent();
     }
 
+    /**
+     * @throws \Exception
+     */
     private function saveImage(UploadedFile $image)
     {
         $path = 'images/' . Str::random();
