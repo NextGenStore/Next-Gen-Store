@@ -20,7 +20,8 @@ Route::prefix('admin')->group(function () {
         ->middleware('guest');;
 });
 Route::prefix('vendor')->group(function () {
-    Route::post('/register', [VendorAuthController::class, 'login']);
+    Route::post('/register', [VendorAuthController::class, 'register']);
+    Route::post('/login', [VendorAuthController::class, 'login']);
 });
 
 Route::prefix('user')->group(function () {
