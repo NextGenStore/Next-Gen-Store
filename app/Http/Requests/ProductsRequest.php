@@ -22,10 +22,15 @@ class ProductsRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'max:2000'],
-            'image' => ['nullable', 'image'],
-            'price' => ['required', 'numeric'],
-            'description' => ['nullable', 'string']
+            'title' => ['required', 'max:2000'],
+            'images.*' => ['nullable', 'image'],
+            'deleted_images.*' => ['nullable', 'int'],
+            'image_positions.*' => ['nullable', 'int'],
+            'categories.*' => ['nullable', 'int', 'exists:categories,id'],
+            'price' => ['required', 'numeric', 'min:0.01'],
+            'quantity' => ['nullable', 'numeric', 'min:0'],
+            'description' => ['nullable', 'string'],
+            'published' => ['required', 'boolean']
         ];
     }
 }

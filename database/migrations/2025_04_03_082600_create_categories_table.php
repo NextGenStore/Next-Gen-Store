@@ -13,9 +13,9 @@ return new class extends Migration {
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name')  ;
             $table->text('description')->nullable();
-            $table->string('slug')->unique(); // Ensure slug is unique
+            $table->string('slug'); // Ensure slug is unique
             $table->boolean('active')->default(true); // Set a default value for active
             $table->foreignId('parent_id')->nullable()->constrained('categories')->onDelete('set null');
             $table->foreignIdFor(User::class, 'created_by')->nullable();
