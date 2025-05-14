@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\Vendor\VendorAuthController;
+use App\Http\Controllers\Vendor\VendorController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth:sanctum', 'admin'])->group(
@@ -21,6 +22,7 @@ Route::prefix('admin')->group(function () {
         ->middleware('guest');;
 });
 Route::prefix('vendor')->group(function () {
+   Route::apiResource('/products', VendorController::class);
     Route::post('/register', [VendorAuthController::class, 'register']);
     Route::post('/login', [VendorAuthController::class, 'login']);
     Route::get('/products', [ProductController::class, 'index']);
