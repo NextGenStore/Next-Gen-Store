@@ -22,6 +22,7 @@ class ProductsFactory extends Factory
             'description' => fake()->realText(2000),
             'price' => fake()->randomFloat(2, 20, 5000),
             'created_at' => now(),
+            'category_id' => 1,
             'updated_at' => now(),
             'created_by' => 1,
             'updated_by' => 1,
