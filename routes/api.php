@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\Vendor\VendorAuthController;
@@ -20,7 +21,11 @@ Route::prefix('admin')->group(function () {
         ->middleware('guest');;
 });
 Route::prefix('vendor')->group(function () {
-    Route::post('/register', [VendorAuthController::class, 'login']);
+    Route::post('/register', [VendorAuthController::class, 'register']);
+    Route::post('/login', [VendorAuthController::class, 'login']);
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::apiResource('categories', CategoryController::class)->except('show');
+    Route::get('/categories/tree', [CategoryController::class, 'getAsTree']);
 });
 
 Route::prefix('user')->group(function () {
