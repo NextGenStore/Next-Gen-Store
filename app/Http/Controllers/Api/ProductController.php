@@ -24,6 +24,7 @@ class ProductController extends Controller
         $sortField = request('sort_field', 'updated_at');
         $sortDirection = request('sort_direction', 'desc');
         $query = Products::query();
+
         $query->orderBy($sortField, $sortDirection);
         if ($search) {
             $query->where('name', 'like', '%{$search}%')
@@ -87,7 +88,7 @@ class ProductController extends Controller
         }
 
         $product->update($data);
-        
+
         return new ProductResource($product);
     }
 
