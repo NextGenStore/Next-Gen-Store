@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class AuthController extends Controller
+class AdminAuthController extends Controller
 {
+    // TODO: add validation
     public  function login( Request $request)
 
     {
@@ -26,7 +28,7 @@ class AuthController extends Controller
         }
 
 
-         /** @var \App\Models\User $user  */
+        /** @var User $user  */
         $user = Auth::user();
         if (!$user->is_admin) {
             Auth::logout();
@@ -51,6 +53,6 @@ class AuthController extends Controller
 
     public function getUser(Request $request)
     {
-            return new UserResource($request->user());
+        return new UserResource($request->user());
     }
 }

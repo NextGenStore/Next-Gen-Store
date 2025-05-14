@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
-use App\Models\User;
-use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
+namespace App\Http\Controllers\Vendor;
 
+use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class VendorAuthController extends Controller
 {
+
     public function register(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => 'required|string',
         ]);
         $vendorRole = Role::firstOrCreate(['name' => 'vendor']);
         $user = User::create([
