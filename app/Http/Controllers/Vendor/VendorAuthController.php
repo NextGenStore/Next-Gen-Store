@@ -52,7 +52,7 @@ class VendorAuthController extends Controller
             ], 403);
         }
 
-        $token = $user->crevvateToken('vendor_token')->plainTextToken;
+        $token = $user->createToken('vendor_token')->plainTextToken;
 
         return response()->json([
             'message' => 'Login successful.',

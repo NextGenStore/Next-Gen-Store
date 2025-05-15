@@ -21,9 +21,9 @@ class Categories extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function products(): BelongsToMany
+    public function products()
     {
-        return $this->belongsToMany(Products::class); // product_category
+        return $this->belongsToMany(Products::class, 'product_categories', 'categories_id', 'products_id');
     }
 
     public function parent(): BelongsTo
