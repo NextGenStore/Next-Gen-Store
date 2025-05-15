@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductCategory;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\Vendor\VendorAuthController;
@@ -12,8 +13,9 @@ Route::middleware(['auth:sanctum', 'admin'])->group(
     function () {
         Route::get('/user', [AdminAuthController::class, 'getUser']);
         Route::post('/logout', [AdminAuthController::class, 'logout']);
-
         Route::apiResource('products', ProductController::class);
+        Route::apiResource('/categories', CategoryController::class);
+        Route::apiResource('/product-category', ProductCategory::class);
     });
 
 Route::prefix('admin')->group(function () {
@@ -22,11 +24,12 @@ Route::prefix('admin')->group(function () {
         ->middleware('guest');;
 });
 Route::prefix('vendor')->group(function () {
-   Route::apiResource('/products', VendorController::class);
+    Route::apiResource('/products', VendorController::class);
     Route::post('/register', [VendorAuthController::class, 'register']);
     Route::post('/login', [VendorAuthController::class, 'login']);
-    Route::get('/products', [ProductController::class, 'index']);
-    Route::apiResource('categories', CategoryController::class)->except('show');
+    Route::apiResource('/products', ProductController::class);
+    Route::apiResource('/categories', CategoryController::class);
+    Route::apiResource('/product-category', ProductCategory::class);
     Route::get('/categories/tree', [CategoryController::class, 'getAsTree']);
 });
 

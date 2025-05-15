@@ -13,7 +13,6 @@ class CategoriesFactory extends Factory
     public function definition(): array
     {
         $name = $this->faker->unique()->word;
-
         return [
             'name' => $name,
             'description' => $this->faker->sentence(10), // Generate a random sentence for description
