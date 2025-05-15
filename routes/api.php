@@ -22,7 +22,6 @@ Route::prefix('admin')->group(function () {
 Route::prefix('vendor')->group(function () {
     Route::post('/register', [VendorAuthController::class, 'login']);
 });
-
 Route::prefix('user')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/login', [UserAuthController::class, 'login']);
