@@ -39,22 +39,18 @@ class ProductController extends Controller
      */
     public function store(ProductsRequest $request)
     {
-
         $data = $request->validated();
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
 
-        /** @var UploadedFile $image */
-        $image = $data['image'] ?? null;
-
-        if ($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getClientMimeType();
-            $data['image_size'] = $image->getSize();
-        }
+        /** @var \Illuminate\Http\UploadedFile[] $images */
+        $images = $data['images'] ?? [];
+        $imagePositions = $data['image_positions'] ?? [];
+        $categories = $data['categories'] ?? [];
 
         $product = Products::create($data);
+        $this->saveCategories($categories, $product);
+//        $this->saveImage($images , $product);
 
         return new ProductResource($product);
     }
@@ -67,31 +63,56 @@ class ProductController extends Controller
         return new ProductResource($products);
     }
 
-    public function update(ProductsRequest $request, Products $product)
+//    public function update(ProductsRequest $request, Products $product)
+//    {
+//        $data = $request->validated();
+//        $data['updated_by'] = $request->user()->id;
+//
+//        /** @var \Illuminate\Http\UploadedFile $image */
+//
+//        $images = $data['images'] ?? [];
+//        $deletedImages = $data['deleted_images'] ?? [];
+//        $imagePositions = $data['image_positions'] ?? [];
+//        $categories = $data['categories'] ?? [];
+//
+//        $this->saveCategories($categories, $product);
+////        $this->saveImage($images, $product);
+////        if (count($deletedImages) > 0) {
+////            $this->deleteImages($deletedImages, $product);
+////        }
+//        $product->update($data);
+//
+//        return new ProductResource($product);
+//    }
+    public function update(ProductsRequest $request, $id)
     {
+        $product = Products::find($id);
+
+        if (!$product) {
+            return response()->json(['message' => 'Product not found'], 404);
+        }
+
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
 
-        /** @var \Illuminate\Http\UploadedFile $image */
+        $images = $data['images'] ?? [];
+        $deletedImages = $data['deleted_images'] ?? [];
+        $categories = $data['categories'] ?? [];
 
-        $image = $data['image'] ?? null;
+        $this->saveCategories($categories, $product);
 
-        if ($image){
-            $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getClientMimeType();
-            $data['image_size'] = $image->getSize();
-
-            if ($product->image){
-                Storage::deleteDirectory( '/public/' .dirname($product->image));
-            }
-        }
+//        if (count($images) > 0) {
+//            $this->saveImage($images, $product);
+//        }
+//
+//        if (count($deletedImages) > 0) {
+//            $this->deleteImages($deletedImages, $product);
+//        }
 
         $product->update($data);
 
         return new ProductResource($product);
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -99,23 +120,58 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+//    public function destroy(Products $products)
+//    {
+//        $products->delete();
+//        return response()->noContent();
+//    }
     public function destroy(Products $products)
     {
         $products->delete();
-
-        return response()->noContent();
+        return response()->json(['message' => 'Product deleted successfully'], 200);
     }
 
-    private function saveImage(UploadedFile $image)
+    private function saveCategories($categoryIds, Products $product)
     {
-        $path = 'images/' . Str::random();
-        if (!Storage::exists($path)) {
-            Storage::makeDirectory($path, 0755, true);
-        }
-        if (!Storage::putFileAS('public/' . $path, $image, $image->getClientOriginalName())) {
-            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
-        }
+        \App\Models\ProductCategory::where('products_id', $product->id)->delete();
+        $data = array_map(fn($id) => (['categories_id' => $id, 'products_id' => $product->id]), $categoryIds);
 
-        return $path . '/' . $image->getClientOriginalName();
+        \App\Models\ProductCategory::insert($data);
     }
+    /**
+     *
+     *
+     * @param UploadedFile[] $images
+     * @return string
+     * @throws \Exception
+     * @author Zura Sekhniashvili <zurasekhniashvili@gmail.com>
+     */
+//    private function saveImage(UploadedFile $image)
+//    {
+//        $path = 'images/' . Str::random();
+//        if (!Storage::exists($path)) {
+//            Storage::makeDirectory($path, 0755, true);
+//        }
+//        if (!Storage::putFileAS('public/' . $path, $image, $image->getClientOriginalName())) {
+//            throw new \Exception("Unable to save file \"{$image->getClientOriginalName()}\"");
+//        }
+//
+//        return $path . '/' . $image->getClientOriginalName();
+//    }
+
+//    private function deleteImages($imageIds, Products $product)
+//    {
+//        $images = ProductImage::query()
+//            ->where('product_id', $product->id)
+//            ->whereIn('id', $imageIds)
+//            ->get();
+//
+//        foreach ($images as $image) {
+//            // If there is an old image, delete it
+//            if ($image->path) {
+//                Storage::deleteDirectory('/public/' . dirname($image->path));
+//            }
+//            $image->delete();
+//        }
+//    }
 }
