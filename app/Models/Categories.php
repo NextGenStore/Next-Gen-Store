@@ -12,7 +12,7 @@ class Categories extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'active', 'parent_id', 'created_by', 'updated_by',];
+    protected $fillable = ['name', 'slug', 'active', 'parent_id', 'created_by', 'updated_by', 'deleted_by'];
 
     public function getSlugOptions(): SlugOptions
     {

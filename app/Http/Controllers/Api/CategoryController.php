@@ -35,10 +35,10 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request)
     {
-        $user = $request->user();
-        if (!$user) {
-            return response()->json(['error' => 'Unauthenticated'], 401);
-        }
+//        $user = $request->user();
+//        if (!$user) {
+//            return response()->json(['error' => 'Unauthenticated'], 401);
+//        }
 
         $data = $request->validated();
         $data['created_by'] = $request->user()->id;
