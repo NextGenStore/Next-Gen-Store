@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Categories;
 use App\Models\Products;
 use Illuminate\Database\Eloquent\Builder;
+
 class ProductController extends Controller
 {
     public function index()
@@ -11,6 +13,23 @@ class ProductController extends Controller
         $query = Products::query();
 
         return $this->renderProducts($query);
+    }
+
+    public function byCategory(Categories $category)
+    {
+        $categories = Categories::getAllChildrenByParent($category);
+
+        $query = Products::query()
+            ->select('products.*')
+            ->join('product_categories AS pc', 'pc.product_id', 'products.id')
+            ->whereIn('pc.category_id', array_map(fn($c) => $c->id, $categories));
+
+        return $this->renderProducts($query);
+    }
+
+    public function view(Products $product)
+    {
+        return view('product.view', ['product' => $product]);
     }
 
     private function renderProducts(Builder $query)
@@ -39,6 +58,17 @@ class ProductController extends Controller
         return view('product.index', [
             'products' => $products
         ]);
+    }
 
+    public function showProductWithCategories($id)
+    {
+        $product = Products::with('categories')->find($id);
+        if (!$product) {
+            abort(404);
+        }
+
+        return view('product.show', [
+            'product' => $product
+        ]);
     }
 }
