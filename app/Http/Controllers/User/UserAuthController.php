@@ -3,13 +3,15 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Customer;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class UserAuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required',
@@ -17,17 +19,14 @@ class UserAuthController extends Controller
             'password' => 'required',
         ]);
 
-        $user = User::create([
+        $user = Customer::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
         $token = $user->createToken('main')->plainTextToken;
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return redirect('register')->with('token', $token);
     }
     public function login(Request $request)
     {
@@ -45,10 +44,7 @@ class UserAuthController extends Controller
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return redirect('login')->with('token', $token);
     }
 
     public function logout(Request $request)
