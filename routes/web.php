@@ -9,10 +9,6 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return view('home');
 });
-Route::get('/login', [UserAuthController::class, 'login'])->name('login');
-Route::post('login', [UserAuthController::class, 'login']);
 
-Route::get('/register', [UserAuthController::class, 'showRegisterForm'])->name('register');
-Route::post('/register', [UserAuthController::class, 'register']);
+// Route to show login page
 
-Route::post('/logout', [UserAuthController::class, 'logout'])->name('logout');

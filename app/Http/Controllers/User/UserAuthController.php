@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 
 class UserAuthController extends Controller
 {
+
     public function register(Request $request): RedirectResponse
     {
         $request->validate([
@@ -49,8 +50,10 @@ class UserAuthController extends Controller
 
     public function logout(Request $request)
     {
+
         $request->user()->tokens()->delete();
 
         return response()->json(['message' => 'Logged out successfully']);
+
     }
 }
