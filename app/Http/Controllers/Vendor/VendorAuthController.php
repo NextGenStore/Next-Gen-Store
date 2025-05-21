@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Vendor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\UserResource;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class VendorAuthController extends Controller
@@ -31,31 +34,39 @@ class VendorAuthController extends Controller
         ]);
     }
 
-    public function login(Request $request)
+    public function login(Request $request): JsonResponse
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string',
+            'email' => ['required', 'email'],
+            'password' => ['required', 'string'],
+            'remember' => ['nullable', 'boolean'],
         ]);
 
-        if (!auth()->attempt($credentials)) {
+        $remember = $credentials['remember'] ?? false;
+        unset($credentials['remember']);
+
+        // Explicitly use the 'web' guard
+        if (!Auth::guard('web')->attempt($credentials, $remember)) {
             return response()->json([
-                'message' => 'Invalid login credentials.',
-            ], 401);
+                'message' => 'Invalid email or password.',
+            ], 422);
         }
 
-        $user = auth()->user();
+        /** @var User $user */
+        $user = Auth::guard('web')->user();
 
         if (!$user->is_vendor) {
+            Auth::guard('web')->logout();
             return response()->json([
-                'message' => 'Access denied. You are not a vendor.',
+                'message' => 'You are not authorized to access this resource.',
             ], 403);
         }
 
-        $token = $user->crevvateToken('vendor_token')->plainTextToken;
+
+        $token = $user->createToken('API Token')->plainTextToken;
 
         return response()->json([
-            'message' => 'Login successful.',
+            'user' => new UserResource($user),
             'token' => $token,
         ]);
     }
