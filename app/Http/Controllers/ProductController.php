@@ -2,40 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Categories;
 use App\Models\Products;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Foundation\Application;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use function request;
 
 class ProductController extends Controller
 {
-    public function index()
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function index(): Factory|View|Application
     {
         $query = Products::query();
 
         return $this->renderProducts($query);
     }
 
-    public function byCategory(Categories $category)
-    {
-        $categories = Categories::getAllChildrenByParent($category);
-
-        $query = Products::query()
-            ->select('products.*')
-            ->join('product_categories AS pc', 'pc.product_id', 'products.id')
-            ->whereIn('pc.category_id', array_map(fn($c) => $c->id, $categories));
-
-        return $this->renderProducts($query);
-    }
-
-    public function view(Products $product)
+    public function view(Products $product): View|Application
     {
         return view('product.view', ['product' => $product]);
     }
 
-    private function renderProducts(Builder $query)
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    private function renderProducts(Builder $query): View|Application|Factory
     {
-        $search = \request()->get('search');
-        $sort = \request()->get('sort', '-updated_at');
+        $search = request()->get('search');
+        $sort = request()->get('sort', '-updated_at');
 
         if ($sort) {
             $sortDirection = 'asc';
@@ -49,7 +50,7 @@ class ProductController extends Controller
         $products = $query
             ->where('published', '=', 1)
             ->where(function ($query) use ($search) {
-                /** @var $query \Illuminate\Database\Eloquent\Builder */
+                /** @var $query Builder */
                 $query->where('products.title', 'like', "%$search%")
                     ->orWhere('products.description', 'like', "%$search%");
             })
@@ -60,15 +61,4 @@ class ProductController extends Controller
         ]);
     }
 
-    public function showProductWithCategories($id)
-    {
-        $product = Products::with('categories')->find($id);
-        if (!$product) {
-            abort(404);
-        }
-
-        return view('product.show', [
-            'product' => $product
-        ]);
-    }
 }

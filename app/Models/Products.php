@@ -28,12 +28,12 @@ class Products extends Model
             ->saveSlugsTo('slug');
     }
 
-    public function getRouteKeyName()
+    public function getRouteKeyName(): string
     {
         return 'slug';
     }
 
-    public function categories()
+    public function categories(): BelongsToMany
     {
         return $this->belongsToMany(Categories::class, 'product_categories', 'products_id', 'categories_id');
     }
