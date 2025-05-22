@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -30,5 +31,10 @@ class Products extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(Categories::class, 'product_categories', 'products_id', 'categories_id');
     }
 }

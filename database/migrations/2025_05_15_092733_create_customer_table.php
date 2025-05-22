@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('vendors', function (Blueprint $table) {
+        Schema::create('customer', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('business_name');
+            $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->enum('status', ['active', 'pending', 'suspended'])->default('pending');
-            $table->boolean('is_confirmed')->default(false);
+            $table->string('password');
+            $table->string('address');
+            $table->string('phone');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('vendors');
+        Schema::dropIfExists('customer');
     }
 };
