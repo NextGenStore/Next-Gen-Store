@@ -34,11 +34,6 @@ Route::prefix('vendor')->group(function () {
         Route::apiResource('product-category', ProductCategory::class);
     });
 });
-<<<<<<< HEAD
-=======
-
-// User Routes
->>>>>>> 734aab1fd6969a34935de608a991e28be6463cdf
 Route::prefix('user')->group(function () {
     Route::post('/register', [UserAuthController::class, 'register']);
     Route::post('/login', [UserAuthController::class, 'login']);

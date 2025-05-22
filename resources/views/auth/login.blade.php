@@ -1,19 +1,15 @@
-<x-app-layout>
-    <form method="POST" action="{{ url('/login') }}" class="w-[400px] mx-auto p-6 my-16">
+@extends('layouts.app')
+
+@section('content')
+    <form method="POST" action="{{ url('/login') }}" class="w-[400px] mx-auto p-6 my-16 bg-white">
         @csrf
 
         <h2 class="text-2xl font-semibold text-center mb-5">
             Login to your account
         </h2>
 
-        <p class="text-center text-gray-500 mb-6">
-            or
-            <a
-                href="{{ url('/register') }}"
-                class="text-sm text-purple-700 hover:text-purple-600"
-            >
-                create new account
-            </a>
+        <p class="text-center text-gray-500 mb-6">or
+            <a href="{{ url('/register') }}" class="text-sm text-purple-700 hover:text-purple-600">create new account</a>
         </p>
 
         {{-- Show errors --}}
@@ -29,12 +25,12 @@
 
         {{-- Email --}}
         <div class="mb-4">
-            <x-input type="email" name="email" placeholder="Your email address" :value="old('email')" required autofocus/>
+            <x-input class="bg-gray-100" type="email" name="email" placeholder="Your email address" :value="old('email')" required autofocus/>
         </div>
 
         {{-- Password --}}
         <div class="mb-4">
-            <x-input type="password" name="password" placeholder="Your password" required />
+            <x-input class="bg-gray-100" type="password" name="password" placeholder="Your password" required />
         </div>
 
         <div class="flex justify-between items-center mb-5">
@@ -55,10 +51,8 @@
             @endif
         </div>
 
-        <button
-            type="submit"
-            class="btn-primary bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 w-full text-white px-4 py-2 rounded">
+        <button type="submit" class="btn-primary bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 w-full text-white px-4 py-2 rounded">
             Login
         </button>
     </form>
-</x-app-layout>
+@endsection

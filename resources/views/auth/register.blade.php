@@ -1,42 +1,32 @@
-<x-app-layout>
-    <form
-        action="{{ route('register') }}"
-        method="post"
-        class="w-[400px] mx-auto p-6 my-16"
-    >
+@extends('layouts.app')
+
+@section('content')
+        <form method="POST" action="{{ url('/register') }}" class="w-[500px] mx-auto p-6 my-16 bg-white">
         @csrf
 
         <h2 class="text-2xl font-semibold text-center mb-4">Create an account</h2>
-        <p class="text-center text-gray-500 mb-3">
-            or
-            <a
-                href="{{ route('login') }}"
-                class="text-sm text-purple-700 hover:text-purple-600"
-            >
-                login with existing account
-            </a>
+        <p class="text-center text-gray-500 mb-3">or
+            <a href="{{ url('login') }}" class="text-sm text-purple-700 hover:text-purple-600">login with existing account</a>
         </p>
-
         <!-- Session Status -->
-        <x-auth-session-status class="mb-4" :status="session('status')"/>
+        <auth-session-status class="mb-4" :status="session('status')"/>
 
+            <div class="mb-4">
+                <x-input class="bg-gray-100" type="email" name="email" placeholder="Your name" :value="old('email')" required autofocus/>
+            </div>
         <div class="mb-4">
-            <x-input placeholder="Your name" type="text" name="name" :value="old('name')" />
+            <x-input class="bg-gray-100" type="email" name="email" placeholder="Your email address" :value="old('email')" required autofocus/>
         </div>
         <div class="mb-4">
-            <x-input placeholder="Your Email" type="email" name="email" :value="old('email')" />
+            <x-input class="bg-gray-100" type="password" name="email" placeholder="Your password" :value="old('email')" required autofocus/>
         </div>
-        <div class="mb-4">
-            <x-input placeholder="Password" type="password" name="password"/>
-        </div>
-        <div class="mb-4">
-            <x-input placeholder="Repeat Password" type="password" name="password_confirmation"/>
+        <div class="mb-6">
+            <x-input class="bg-gray-100" type="password" name="email" placeholder="confirm password" :value="old('email')" required autofocus/>
         </div>
 
         <button
-            class="btn-primary bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700 w-full"
-        >
+            class="btn-primary bg-orange-600 hover:bg-orange-600 active:bg-orange-700 w-full text-white">
             Signup
         </button>
     </form>
-</x-app-layout>
+@endsection

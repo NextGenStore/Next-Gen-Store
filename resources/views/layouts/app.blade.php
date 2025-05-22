@@ -1,64 +1,58 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel E-commerce Website') }}</title>
-
-    <!-- Scripts -->
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta charset="UTF-8">
+    <title>NextGenStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         [x-cloak] {
             display: none !important;
         }
     </style>
 </head>
-<body>
-@include('layouts.navigation')
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col">
 
-<main class="p-5">
-    {{ $slot }}
+<!-- Navbar -->
+<nav class="bg-orange-600 text-white px-6 py-4 shadow">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <!-- Left: Logo & Links -->
+        <div class="flex items-center space-x-6">
+            <a href="#" class="text-xl font-bold">NextGenStore</a>
+            <a href="#" class="hover:text-orange-400">Home</a>
+            <a href="#" class="hover:text-orange-400">Categories</a>
+            <a href="#" class="hover:text-orange-400">Something</a>
+        </div>
+
+        <!-- Right: Account + Cart -->
+        <div class="flex items-center space-x-6">
+            <a href="{{ route('user.login.form') }}" class="hover:text-orange-400">Login</a>
+            <a href="{{ route('user.register.form') }}" class="hover:text-orange-400">Register now</a>
+            <a href="#" class="hover:text-orange-400">🛒 Cart</a>
+            <!-- Account Dropdown -->
+            <div class="relative group">
+                <button class="flex items-center hover:text-orange-400 space-x-1">
+                    <span>👤 My Account</span>
+                    <svg class="w-4 h-4 transform transition-transform group-hover:rotate-180" fill="none"
+                         stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                    </svg>
+                </button>
+
+                <div
+                    class="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded-md shadow-md hidden group-hover:block z-50">
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">My Profile</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Watchlist</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">My Orders</a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-100">Logout</a>
+                </div>
+            </div>
+        </div>
+</nav>
+
+<!-- Main content -->
+<main class="flex-grow p-6">
+    @yield('content')
 </main>
 
-<!-- Toast -->
-<div
-    x-data="toast"
-    x-show="visible"
-    x-transition
-    x-cloak
-    @notify.window="show($event.detail.message)"
-    class="fixed w-[400px] left-1/2 -ml-[200px] top-16 py-2 px-4 pb-4 bg-emerald-500 text-white"
->
-    <div class="font-semibold" x-text="message"></div>
-    <button
-        @click="close"
-        class="absolute flex items-center justify-center right-2 top-2 w-[30px] h-[30px] rounded-full hover:bg-black/10 transition-colors"
-    >
-        <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-        >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-            />
-        </svg>
-    </button>
-    <!-- Progress -->
-    <div>
-        <div
-            class="absolute left-0 bottom-0 right-0 h-[6px] bg-black/10"
-            :style="{'width': `${percent}%`}"
-        ></div>
-    </div>
-</div>
-<!--/ Toast -->
 </body>
 </html>

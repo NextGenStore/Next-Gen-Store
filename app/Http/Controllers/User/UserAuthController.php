@@ -1,59 +1,56 @@
-<?php
-
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
-class UserAuthController extends Controller
+    class UserAuthController extends Controller
 {
+public function register(Request $request)
+{
+$request->validate([
+'name' => 'required|string|max:255',
+'email' => 'required|email|unique:customers,email',
+'password' => 'required|min:6|confirmed',
+]);
 
-    public function register(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
-        ]);
+$customer = Customer::create([
+'name' => $request->name,
+'email' => $request->email,
+'password' => Hash::make($request->password),
+]);
 
-        $user = Customer::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+Auth::login($customer);
 
-        $token = $user->createToken('main')->plainTextToken;
-        return redirect('register')->with('token', $token);
-    }
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
+return redirect()->route('home');
+}
 
-        $user = User::where('email', $request->email)->first();
+public function login(Request $request)
+{
+$request->validate([
+'email' => 'required|string|email',
+'password' => 'required|string',
+]);
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
+$customer = Customer::where('email', $request->email)->first();
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return redirect('login')->with('token', $token);
-    }
+if (!$customer || !Hash::check($request->password, $customer->password)) {
+throw ValidationException::withMessages([
+'email' => ['The provided credentials are incorrect.'],
+]);
+}
 
-    public function logout(Request $request)
-    {
+Auth::login($customer);
 
-        $request->user()->tokens()->delete();
+return redirect()->route('home');
+}
 
-        return response()->json(['message' => 'Logged out successfully']);
-
-    }
+public function logout(Request $request)
+{
+Auth::logout();
+return redirect()->route('home')->with('status', 'Logged out successfully');
+}
 }
