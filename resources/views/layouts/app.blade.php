@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @auth
+    <meta name="auth-check" content="true">
+    @endauth
     <title>NextGenStore</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         [x-cloak] {
@@ -27,7 +32,7 @@
         <div class="flex items-center space-x-6">
             <a href="{{ route('user.login.form') }}" class="hover:text-orange-400">Login</a>
             <a href="{{ route('user.register.form') }}" class="hover:text-orange-400">Register now</a>
-            <a href="#" class="hover:text-orange-400">🛒 Cart</a>
+            <x-cart-button />
             <!-- Account Dropdown -->
             <div class="relative group">
                 <button class="flex items-center hover:text-orange-400 space-x-1">
@@ -53,6 +58,8 @@
 <main class="flex-grow p-6">
     @yield('content')
 </main>
+
+<x-notification />
 
 </body>
 </html>

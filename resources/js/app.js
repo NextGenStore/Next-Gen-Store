@@ -8,6 +8,29 @@ Alpine.plugin(collapse)
 
 window.Alpine = Alpine;
 
+// Global function to add items to cart
+window.addToCart = function(productId, quantity = 1) {
+    const url = `/cart/add/${productId}`;
+    post(url, {quantity})
+        .then(result => {
+            window.dispatchEvent(new CustomEvent('cart-change', {detail: {count: result.count}}));
+            window.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    message: "The item was added into the cart"
+                }
+            }));
+        })
+        .catch(response => {
+            console.log(response);
+            window.dispatchEvent(new CustomEvent('notify', {
+                detail: {
+                    message: response.message || 'Server Error. Please try again.',
+                    type: 'error'
+                }
+            }));
+        });
+};
+
 document.addEventListener("alpine:init", async () => {
 
     Alpine.data("toast", () => ({
@@ -101,5 +124,21 @@ document.addEventListener("alpine:init", async () => {
     });
 });
 
+
+// Initialize cart count on page load
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        // Only fetch cart count if user is logged in
+        if (document.querySelector('meta[name="auth-check"]')) {
+            const response = await fetch('/cart/count');
+            if (response.ok) {
+                const data = await response.json();
+                window.dispatchEvent(new CustomEvent('cart-change', {detail: {count: data.count}}));
+            }
+        }
+    } catch (error) {
+        console.error('Failed to fetch cart count:', error);
+    }
+});
 
 Alpine.start();

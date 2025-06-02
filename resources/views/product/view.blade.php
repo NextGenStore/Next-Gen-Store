@@ -4,8 +4,10 @@
             <div class="lg:col-span-3">
                 <div
                     x-data="{
-  images: ['{{$product->image}}'],
-  activeImage: null,
+  images: {{json_encode($product->images)}},
+  activeImage: '{{$product->image}}',
+  id: {{$product->id}},
+  addToCartUrl: '{{route('cart.add', $product)}}',
   prev() {
       let index = this.images.indexOf(this.activeImage);
       if (index === 0)
@@ -102,7 +104,7 @@
                     />
                 </div>
                 <button
-                    @click="addToCart(id, $refs.quantityEl.value)"
+                    @click="window.addToCart(id, $refs.quantityEl.value)"
                     class="btn-primary py-4 text-lg flex justify-center min-w-0 w-full mb-6"
                 >
                     <svg
