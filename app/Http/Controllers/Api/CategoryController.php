@@ -29,7 +29,6 @@ class CategoryController extends Controller
     {
         return Categories::getActiveAsTree(CategoryTreeResource::class);
     }
-
     /**
      * Store a newly created resource in storage.
      */
