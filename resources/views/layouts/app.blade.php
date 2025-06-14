@@ -27,7 +27,7 @@
         <div class="flex items-center space-x-6">
             <a href="{{ route('user.login.form') }}" class="hover:text-orange-400">Login</a>
             <a href="{{ route('user.register.form') }}" class="hover:text-orange-400">Register now</a>
-            <a href="#" class="hover:text-orange-400">🛒 Cart</a>
+            <a href="{{ route ('card.index') }}" class="hover:text-orange-400">🛒 Cart</a>
             <!-- Account Dropdown -->
             <div class="relative group">
                 <button class="flex items-center hover:text-orange-400 space-x-1">
@@ -47,6 +47,7 @@
                 </div>
             </div>
         </div>
+    </div>
 </nav>
 
 <!-- Main content -->
