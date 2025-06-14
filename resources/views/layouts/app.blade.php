@@ -25,7 +25,7 @@
 
         <!-- Right: Account + Cart -->
         <div class="flex items-center space-x-6">
-            <a href="{{ route('user.login.form') }}" class="hover:text-orange-400">Login</a>
+            <a href="{{ route('user.login.form') }}" class="">Login</a>
             <a href="{{ route('user.register.form') }}" class="hover:text-orange-400">Register now</a>
             <a href="#" class="hover:text-orange-400">🛒 Cart</a>
             <!-- Account Dropdown -->
