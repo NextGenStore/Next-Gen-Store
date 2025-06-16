@@ -4,30 +4,32 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
-use App\Models\User;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class UserAuthController extends Controller
 {
-    public function register(Request $request): RedirectResponse
+    public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'password' => 'required',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email',
+            'password' => 'required|min:6|confirmed',
         ]);
 
-        $user = Customer::create([
+        $customer = Customer::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
 
-        $token = $user->createToken('main')->plainTextToken;
-        return redirect('register')->with('token', $token);
+        Auth::login($customer);
+
+        return redirect()->route('home');
     }
+
     public function login(Request $request)
     {
         $request->validate([
@@ -35,22 +37,22 @@ class UserAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        $customer = Customer::where('email', $request->email)->first();
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
+        if (!$customer || !Hash::check($request->password, $customer->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-        return redirect('login')->with('token', $token);
+        Auth::login($customer);
+
+        return redirect()->route('home');
     }
 
     public function logout(Request $request)
     {
-        $request->user()->tokens()->delete();
-
-        return response()->json(['message' => 'Logged out successfully']);
+        Auth::logout();
+        return redirect()->route('home')->with('status', 'Logged out successfully');
     }
 }

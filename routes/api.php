@@ -10,15 +10,17 @@ use Illuminate\Support\Facades\Route;
 
 // Admin Routes
 Route::prefix('admin')->group(function () {
-    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('guest');
 
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('guest');
     Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::get('/user', [AdminAuthController::class, 'getUser']);
         Route::post('/logout', [AdminAuthController::class, 'logout']);
         Route::apiResource('products', ProductController::class);
         Route::apiResource('categories', CategoryController::class);
-//        Route::apiResource('product-category', ProductCategory::class);
     });
+});
+Route::prefix('vendor')->group(function () {
+    Route::post('/login', [AdminAuthController::class, 'login'])->middleware('guest');
 });
 
 // Vendor Routes

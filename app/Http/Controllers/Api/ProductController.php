@@ -63,27 +63,6 @@ class ProductController extends Controller
         return new ProductResource($products);
     }
 
-//    public function update(ProductsRequest $request, Products $product)
-//    {
-//        $data = $request->validated();
-//        $data['updated_by'] = $request->user()->id;
-//
-//        /** @var \Illuminate\Http\UploadedFile $image */
-//
-//        $images = $data['images'] ?? [];
-//        $deletedImages = $data['deleted_images'] ?? [];
-//        $imagePositions = $data['image_positions'] ?? [];
-//        $categories = $data['categories'] ?? [];
-//
-//        $this->saveCategories($categories, $product);
-////        $this->saveImage($images, $product);
-////        if (count($deletedImages) > 0) {
-////            $this->deleteImages($deletedImages, $product);
-////        }
-//        $product->update($data);
-//
-//        return new ProductResource($product);
-//    }
     public function update(ProductsRequest $request, $id)
     {
         $product = Products::find($id);
