@@ -16,13 +16,12 @@ class VendorCategoryController extends Controller
 
     public function show($id)
     {
-        // Validate $id is an integer
         if (!is_numeric($id)) {
             return response()->json(['error' => 'Invalid ID'], 400);
         }
 
         try {
-            $category = Categories::findOrFail($id); // Use findOrFail for better error handling
+            $category = Categories::findOrFail($id); 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return response()->json(['error' => 'Not found'], 404);
         }

@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin'=>  Admin::class,
             'vendor'=> Vendor::class,
+            'guestOrVerified' => App\Http\Middleware\GuestOrVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
