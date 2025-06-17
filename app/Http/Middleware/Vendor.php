@@ -18,7 +18,7 @@ class Vendor
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::user() && Auth::user()->is_vendor == 1) {
+        if (Auth::user() && Auth::user()->is_vendor == 2) {
             return $next($request);
         }
         return response([
