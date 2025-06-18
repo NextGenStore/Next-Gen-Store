@@ -8,6 +8,7 @@ use App\Http\Controllers\User\UserAuthController;
 use App\Http\Controllers\Vendor\VendorCategoryController;
 use App\Http\Controllers\Vendor\VendorProductController;
 use App\Http\Controllers\Vendor\VendorAuthController;
+use App\Http\Controllers\Vendor\VendorProductCategoryController;
 use Illuminate\Support\Facades\Route;
 
 // Admin Routes
@@ -35,7 +36,7 @@ Route::prefix('vendor')->group(function () {
         Route::post('/logout', [VendorAuthController::class, 'logout']);
         Route::apiResource('products', VendorProductController::class);
         Route::apiResource('categories', VendorCategoryController::class);
-        Route::apiResource('product-category', ProductCategory::class);
+        Route::apiResource('product-category', VendorProductCategoryController::class);
     });
 });
 

@@ -52,9 +52,7 @@ class VendorProductController extends Controller
 
         $products = $query->paginate(5);
 
-        return view('product.index', [
-            'products' => $products
-        ]);
+        return response()->json($products);
     }
 
     public function showProductWithCategories($id)
