@@ -1,34 +1,31 @@
-# Use the official PHP image with Apache
+# Use official PHP image with necessary extensions
 FROM php:8.3-fpm
 
-# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     zip \
     git \
+    build-essential \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install -j$(nproc) gd pdo pdo_mysql
 
-
-# Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs
 
-# Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
-# Copy the Laravel app code into the container
-COPY . .
+COPY . /var/www/html
 
-# Install dependencies using Composer
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN composer install
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# Expose the necessary port
+ENTRYPOINT ["entrypoint.sh"]
+
 EXPOSE 9000
 
 CMD ["php-fpm"]
